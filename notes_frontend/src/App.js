@@ -39,9 +39,14 @@ export default Blits.Application({
       try {
         registerTheme(this)
       } catch (e) {
-        // Surface theme errors rather than silent fail
         console.error('Theme registration failed:', e)
         this.fallback = 'Theme error'
+      }
+    },
+    created() {
+      // Redundant safety to ensure theme is present for very early component access
+      if (!this.$theme?.colors) {
+        try { registerTheme(this) } catch {/* no-op */}
       }
     }
   }

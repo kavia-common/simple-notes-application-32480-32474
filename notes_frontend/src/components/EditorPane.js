@@ -74,7 +74,18 @@ export default Blits.Component('EditorPane', {
     </Element>
   `,
   computed: {
-    $theme() { return this.app.$theme },
+    $theme() {
+      const t = this.app?.$theme
+      return t && t.colors ? t : { colors: {
+        primary: 0xff2563eb,
+        error: 0xffef4444,
+        bg: 0xfff9fafb,
+        surface: 0xffffffff,
+        surfaceAlt: 0xfff3f4f6,
+        text: 0xff111827,
+        textMuted: 0xff4b5563
+      }}
+    },
     $w() { return 1320 },
     $h() { return 980 },
     $subtitle() {

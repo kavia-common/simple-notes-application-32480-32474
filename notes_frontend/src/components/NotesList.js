@@ -73,7 +73,17 @@ export default Blits.Component('NotesList', {
     </Element>
   `,
   computed: {
-    $theme() { return this.app?.$theme || { colors: { surfaceAlt: 0xffffffff, primary: 0xff2563eb, text: 0xff111827, textMuted: 0xff4b5563 } } },
+    $theme() {
+      const t = this.app?.$theme
+      return t && t.colors ? t : { colors: {
+        primary: 0xff2563eb,
+        bg: 0xfff9fafb,
+        surface: 0xffffffff,
+        surfaceAlt: 0xfff3f4f6,
+        text: 0xff111827,
+        textMuted: 0xff4b5563
+      }}
+    },
     $w() { return 560 },
     $h() { return 980 },
     $listY() { return 136 },

@@ -1,7 +1,6 @@
 import Blits from '@lightningjs/blits'
 import NotesList from '../components/NotesList.js'
 import EditorPane from '../components/EditorPane.js'
-import OceanTheme from '../theme.js'
 
 /**
  * Home page: Header + Notes list + Editor pane
@@ -46,7 +45,19 @@ export default Blits.Component('Home', {
     </Element>
   `,
   computed: {
-    $theme() { return this.app.$theme || OceanTheme },
+    $theme() {
+      // Safe fallback to avoid runtime errors prior to theme registration
+      const t = this.app?.$theme
+      return t && t.colors ? t : { colors: {
+        primary: 0xff2563eb,
+        error: 0xffef4444,
+        bg: 0xfff9fafb,
+        surface: 0xffffffff,
+        surfaceAlt: 0xfff3f4f6,
+        text: 0xff111827,
+        textMuted: 0xff4b5563
+      }}
+    },
     $w() { return 1920 },
     $h() { return 1080 }
   },

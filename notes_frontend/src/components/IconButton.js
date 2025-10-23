@@ -48,7 +48,8 @@ export default Blits.Component('IconButton', {
     $w() { return 120 },
     $h() { return 80 },
     $bg() {
-      const c = this.bgColor ?? this.app.$theme.colors.primary
+      const theme = this.app?.$theme
+      const c = this.bgColor ?? (theme?.colors?.primary ?? 0xff2563eb)
       return c
     },
     $alpha() {
@@ -61,10 +62,12 @@ export default Blits.Component('IconButton', {
       return this.icon || '+'
     },
     $iconColor() {
-      return this.app.$theme.colors.surface
+      const theme = this.app?.$theme
+      return theme?.colors?.surface ?? 0xffffffff
     },
     $labelColor() {
-      return this.app.$theme.colors.text
+      const theme = this.app?.$theme
+      return theme?.colors?.text ?? 0xff111827
     }
   },
   input: {

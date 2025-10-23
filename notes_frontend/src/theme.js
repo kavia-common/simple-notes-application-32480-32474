@@ -43,9 +43,20 @@ const OceanTheme = {
   }
 }
 
-// PUBLIC_INTERFACE
+/**
+ * PUBLIC_INTERFACE
+ * Registers the Ocean theme on the provided Blits application instance.
+ * Ensures the theme object is available as app.$theme for all components.
+ * @param {any} app - Blits application instance
+ * @returns {object} The registered theme object
+ */
 function registerTheme(app) {
-  /** Register theme on the Blits app instance for global access. */
+  if (!app) {
+    // Defensive: do not throw hard to avoid breaking boot; log instead.
+    // eslint-disable-next-line no-console
+    console.warn('registerTheme called without app instance')
+    return OceanTheme
+  }
   app.$theme = OceanTheme
   return OceanTheme
 }
