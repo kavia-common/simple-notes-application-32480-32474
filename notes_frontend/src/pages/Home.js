@@ -46,13 +46,9 @@ export default Blits.Component('Home', {
   `,
   computed: {
     $theme() {
-      // Centralized safe accessor with debug logging if theme is not yet present
-      // Use log-once semantics via a local flag to avoid noisy logs
-      if (!this.__theme_warned && !(this.app?.$theme && this.app.$theme.colors)) {
-        this.__theme_warned = true
-      }
-      const { getSafeTheme } = require('../theme.js')
-      return getSafeTheme(this, /*logWhenMissing*/ true)
+      // Canonical accessor that never returns undefined
+      const { getTheme } = require('../theme.js')
+      return getTheme(this)
     },
     $w() { return 1920 },
     $h() { return 1080 }

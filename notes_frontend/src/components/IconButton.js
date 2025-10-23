@@ -48,8 +48,8 @@ export default Blits.Component('IconButton', {
     $w() { return 120 },
     $h() { return 80 },
     $bg() {
-      const { getSafeTheme } = require('../theme.js')
-      const theme = getSafeTheme(this)
+      const { getTheme } = require('../theme.js')
+      const theme = getTheme(this)
       const c = this.bgColor ?? (theme.colors.primary)
       return c
     },
@@ -63,13 +63,13 @@ export default Blits.Component('IconButton', {
       return this.icon || '+'
     },
     $iconColor() {
-      const { getSafeTheme } = require('../theme.js')
-      const theme = getSafeTheme(this)
+      const { getTheme } = require('../theme.js')
+      const theme = getTheme(this)
       return theme.colors.surface
     },
     $labelColor() {
-      const { getSafeTheme } = require('../theme.js')
-      const theme = getSafeTheme(this)
+      const { getTheme } = require('../theme.js')
+      const theme = getTheme(this)
       return theme.colors.text
     }
   },

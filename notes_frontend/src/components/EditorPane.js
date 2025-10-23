@@ -75,8 +75,8 @@ export default Blits.Component('EditorPane', {
   `,
   computed: {
     $theme() {
-      const { getSafeTheme } = require('../theme.js')
-      return getSafeTheme(this, /*logWhenMissing*/ true)
+      const { getTheme } = require('../theme.js')
+      return getTheme(this)
     },
     $w() { return 1320 },
     $h() { return 980 },

@@ -45,13 +45,25 @@ const OceanTheme = {
 const FallbackTheme = {
   colors: {
     primary: 0xff2563eb,
+    secondary: 0xfff59e0b,
     error: 0xffef4444,
     bg: 0xfff9fafb,
     surface: 0xffffffff,
     surfaceAlt: 0xfff3f4f6,
     text: 0xff111827,
-    textMuted: 0xff4b5563
-  }
+    textMuted: 0xff4b5563,
+    border: 0xffe5e7eb,
+    shadow: 0x33000000
+  },
+  radii: { sm: 8, md: 16, lg: 24 },
+  spacing: { xs: 8, sm: 12, md: 16, lg: 24, xl: 32 },
+  typography: {
+    title: { size: 48, lineHeight: 56 },
+    h2: { size: 32, lineHeight: 40 },
+    body: { size: 24, lineHeight: 32 },
+    small: { size: 20, lineHeight: 26 }
+  },
+  elevation(alpha = 0x33) { return (alpha << 24) | 0x000000 }
 }
 
 /**
@@ -65,9 +77,31 @@ function logThemeMissing(comp, context = 'access') {
     const name = comp?.name || comp?.constructor?.name || 'UnknownComponent'
     // eslint-disable-next-line no-console
     console.warn(`[Theme] ${name} attempted theme ${context} before registration.`)
+    // Also output a trace to capture call stack and file origins.
+    // eslint-disable-next-line no-console
+    console.trace('[Theme Trace] Theme missing at:', name)
   } catch {
     // noop
   }
+}
+
+/**
+ * PUBLIC_INTERFACE
+ * Canonical accessor that ALWAYS returns a fully-populated theme object.
+ * Adds a trace when theme is missing and marks app to optionally show a banner.
+ * @param {any} ctx - component instance (this) or app
+ * @returns {object} OceanTheme or fully-populated FallbackTheme
+ */
+function getTheme(ctx) {
+  const t = ctx?.app?.$theme || ctx?.$theme
+  if (t && t.colors) return t
+  // Mark app for optional banner and trace for debugging
+  try {
+    const app = ctx?.app || ctx
+    if (app) app.__theme_missing_once = true
+  } catch { /* noop */ }
+  logThemeMissing(ctx, 'getTheme')
+  return FallbackTheme
 }
 
 /**
@@ -94,7 +128,9 @@ function registerTheme(app) {
 
 /**
  * PUBLIC_INTERFACE
+ * Deprecated alias maintained for backward compatibility.
  * Safely get theme from a component/app with a fallback and optional logging.
+ * Prefer using getTheme(ctx).
  * @param {any} comp - Component instance (this) or app
  * @param {boolean} logWhenMissing - Whether to log if theme is missing
  * @returns {object} theme-like object with colors
@@ -103,8 +139,13 @@ function getSafeTheme(comp, logWhenMissing = false) {
   const t = comp?.app?.$theme || comp?.$theme
   if (t && t.colors) return t
   if (logWhenMissing) logThemeMissing(comp)
+  // Mark app to show banner if needed
+  try {
+    const app = comp?.app || comp
+    if (app) app.__theme_missing_once = true
+  } catch { /* noop */ }
   return FallbackTheme
 }
 
 export default OceanTheme
-export { registerTheme, getSafeTheme, logThemeMissing, FallbackTheme }
+export { registerTheme, getTheme, getSafeTheme, logThemeMissing, FallbackTheme }
