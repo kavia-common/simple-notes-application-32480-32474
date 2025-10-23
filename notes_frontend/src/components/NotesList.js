@@ -144,7 +144,9 @@ export default Blits.Component('NotesList', {
     },
     $rowColor(item, index) {
       const selected = this.view[index]?.id === this.selectedId
-      return selected ? this.$theme.colors.primary : this.$theme.colors.surfaceAlt
+      const { getTheme } = require('../theme.js')
+      const t = getTheme(this)
+      return selected ? t.colors.primary : t.colors.surfaceAlt
     },
     $rowAlpha(index) {
       const selected = this.view[index]?.id === this.selectedId

@@ -75,10 +75,8 @@ const FallbackTheme = {
 function logThemeMissing(comp, context = 'access') {
   try {
     const name = comp?.name || comp?.constructor?.name || 'UnknownComponent'
-    // eslint-disable-next-line no-console
     console.warn(`[Theme] ${name} attempted theme ${context} before registration.`)
     // Also output a trace to capture call stack and file origins.
-    // eslint-disable-next-line no-console
     console.trace('[Theme Trace] Theme missing at:', name)
   } catch {
     // noop
@@ -115,7 +113,6 @@ function getTheme(ctx) {
 function registerTheme(app) {
   if (!app) {
     // Defensive: do not throw hard to avoid breaking boot; log instead.
-    // eslint-disable-next-line no-console
     console.warn('registerTheme called without app instance')
     return OceanTheme
   }
@@ -148,4 +145,5 @@ function getSafeTheme(comp, logWhenMissing = false) {
 }
 
 export default OceanTheme
-export { registerTheme, getTheme, getSafeTheme, logThemeMissing, FallbackTheme }
+const DEFAULT_THEME = OceanTheme
+export { registerTheme, getTheme, getSafeTheme, logThemeMissing, FallbackTheme, DEFAULT_THEME }
