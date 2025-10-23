@@ -73,32 +73,41 @@ export default Blits.Component('NotesList', {
     </Element>
   `,
   computed: {
-    $theme() { return this.app.$theme },
+    $theme() { return this.app?.$theme || { colors: { surfaceAlt: 0xffffffff, primary: 0xff2563eb, text: 0xff111827, textMuted: 0xff4b5563 } } },
     $w() { return 560 },
     $h() { return 980 },
     $listY() { return 136 },
     $listH() { return this.$h - this.$listY - 16 },
-    $items() { return this.items },
-    $view() { return this.view },
+    $items() { return Array.isArray(this.items) ? this.items : [] },
+    $view() { return Array.isArray(this.view) ? this.view : [] },
     $searchLabel() {
       return this.q ? `Search: ${this.q}` : 'Search by title (type to filter)'
     }
   },
   methods: {
     refresh() {
-      const all = NoteService.getNotes()
-      this.items = all
-      this.applyFilter()
+      try {
+        const all = NoteService.getNotes()
+        this.items = Array.isArray(all) ? all : []
+        this.applyFilter()
+      } catch (e) {
+        console.error('NotesList.refresh error', e)
+      }
     },
     applyFilter() {
-      this.view = NoteService.searchNotes(this.q)
-      const idx = this.view.findIndex(n => n.id === this.selectedId)
-      this.focusIndex = idx >= 0 ? idx : 0
-      this.ensureOnSelect()
+      try {
+        this.view = NoteService.searchNotes(this.q) || []
+        const idx = this.view.findIndex(n => n.id === this.selectedId)
+        this.focusIndex = idx >= 0 ? idx : 0
+        this.ensureOnSelect()
+      } catch (e) {
+        console.error('NotesList.applyFilter error', e)
+      }
     },
     ensureOnSelect() {
-      const item = this.view[this.focusIndex]
-      if (item && this.onSelect) this.onSelect(item)
+      const arr = Array.isArray(this.view) ? this.view : []
+      const item = arr[this.focusIndex]
+      if (item && typeof this.onSelect === 'function') this.onSelect(item)
     },
     // PUBLIC_INTERFACE
     setQuery(q) {
@@ -145,21 +154,21 @@ export default Blits.Component('NotesList', {
     }
   },
   input: {
-    up() { this.methods.focusPrev() },
-    down() { this.methods.focusNext() },
+    up() { this.focusPrev() },
+    down() { this.focusNext() },
     left() { /* bubble to parent if needed */ this.parent?.focus?.() },
     right() { this.parent?.focus?.() },
-    enter() { this.methods.ensureOnSelect?.() },
+    enter() { this.ensureOnSelect?.() },
     back() { /* no-op */ },
     // typing for search
     key(e) {
       const ch = e?.key || ''
       if (ch === 'Backspace') {
-        this.methods.setQuery(this.q.slice(0, -1))
-      } else if (ch.length === 1) {
-        this.methods.setQuery(this.q + ch)
-      } else if (ch.toLowerCase() === 'n') {
-        this.methods.createNew()
+        this.setQuery(this.q.slice(0, -1))
+      } else if (ch && ch.length === 1) {
+        this.setQuery((this.q || '') + ch)
+      } else if (typeof ch === 'string' && ch.toLowerCase() === 'n') {
+        this.createNew()
       }
     }
   }

@@ -143,12 +143,12 @@ export default Blits.Component('EditorPane', {
     left() { this.parent?.focus?.() },
     right() { this.parent?.focus?.() },
     enter() { /* accept */ },
-    back() { if (this.showConfirm) this.methods.$confirmDelete(false) },
+    back() { if (this.showConfirm) this.$confirmDelete(false) },
     key(e) {
       if (!this.note) return
       const key = e?.key || ''
       if (key === 'Delete') {
-        this.methods.$onDelete()
+        this.$onDelete()
         return
       }
       if (key === 'Tab') {
@@ -156,25 +156,25 @@ export default Blits.Component('EditorPane', {
         return
       }
       if (key === 'Escape') {
-        if (this.showConfirm) this.methods.$confirmDelete(false)
+        if (this.showConfirm) this.$confirmDelete(false)
         return
       }
       // Basic text input simulation
       if (key === 'Backspace') {
         if (this.cursor === 'title') this.localTitle = this.localTitle.slice(0, -1)
         else this.localContent = this.localContent.slice(0, -1)
-        this.methods.autosave()
+        this.autosave()
       } else if (key.length === 1) {
         if (this.cursor === 'title') {
           this.localTitle += key
         } else {
           this.localContent += key
         }
-        this.methods.autosave()
+        this.autosave()
       } else if (key === 'Enter') {
         if (this.cursor === 'content') {
           this.localContent += '\n'
-          this.methods.autosave()
+          this.autosave()
         }
       }
     }

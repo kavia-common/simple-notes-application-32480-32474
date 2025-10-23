@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-/* eslint-disable */
+
 
 import { defineConfig } from 'vite'
 import blitsVitePlugins from '@lightningjs/blits/vite'
