@@ -1,5 +1,3 @@
-
-
 /**
  * Ocean Professional theme tokens for Lightning/Blits.
  * Centralized colors, radii, shadows, and spacing to keep UI consistent.
@@ -43,10 +41,40 @@ const OceanTheme = {
   }
 }
 
+// Minimal safe fallback used when theme is not yet registered
+const FallbackTheme = {
+  colors: {
+    primary: 0xff2563eb,
+    error: 0xffef4444,
+    bg: 0xfff9fafb,
+    surface: 0xffffffff,
+    surfaceAlt: 0xfff3f4f6,
+    text: 0xff111827,
+    textMuted: 0xff4b5563
+  }
+}
+
+/**
+ * Logs a warning when a component tries to access theme before it's available.
+ * Includes the component name to aid debugging.
+ * @param {any} comp - Component instance (this)
+ * @param {string} context - Optional context message
+ */
+function logThemeMissing(comp, context = 'access') {
+  try {
+    const name = comp?.name || comp?.constructor?.name || 'UnknownComponent'
+    // eslint-disable-next-line no-console
+    console.warn(`[Theme] ${name} attempted theme ${context} before registration.`)
+  } catch {
+    // noop
+  }
+}
+
 /**
  * PUBLIC_INTERFACE
  * Registers the Ocean theme on the provided Blits application instance.
  * Ensures the theme object is available as app.$theme for all components.
+ * Uses idempotent registration to avoid duplicates.
  * @param {any} app - Blits application instance
  * @returns {object} The registered theme object
  */
@@ -57,9 +85,26 @@ function registerTheme(app) {
     console.warn('registerTheme called without app instance')
     return OceanTheme
   }
+  if (app.$theme && app.$theme.colors) {
+    return app.$theme
+  }
   app.$theme = OceanTheme
   return OceanTheme
 }
 
+/**
+ * PUBLIC_INTERFACE
+ * Safely get theme from a component/app with a fallback and optional logging.
+ * @param {any} comp - Component instance (this) or app
+ * @param {boolean} logWhenMissing - Whether to log if theme is missing
+ * @returns {object} theme-like object with colors
+ */
+function getSafeTheme(comp, logWhenMissing = false) {
+  const t = comp?.app?.$theme || comp?.$theme
+  if (t && t.colors) return t
+  if (logWhenMissing) logThemeMissing(comp)
+  return FallbackTheme
+}
+
 export default OceanTheme
-export { registerTheme }
+export { registerTheme, getSafeTheme, logThemeMissing, FallbackTheme }

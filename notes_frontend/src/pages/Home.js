@@ -46,17 +46,13 @@ export default Blits.Component('Home', {
   `,
   computed: {
     $theme() {
-      // Safe fallback to avoid runtime errors prior to theme registration
-      const t = this.app?.$theme
-      return t && t.colors ? t : { colors: {
-        primary: 0xff2563eb,
-        error: 0xffef4444,
-        bg: 0xfff9fafb,
-        surface: 0xffffffff,
-        surfaceAlt: 0xfff3f4f6,
-        text: 0xff111827,
-        textMuted: 0xff4b5563
-      }}
+      // Centralized safe accessor with debug logging if theme is not yet present
+      // Use log-once semantics via a local flag to avoid noisy logs
+      if (!this.__theme_warned && !(this.app?.$theme && this.app.$theme.colors)) {
+        this.__theme_warned = true
+      }
+      const { getSafeTheme } = require('../theme.js')
+      return getSafeTheme(this, /*logWhenMissing*/ true)
     },
     $w() { return 1920 },
     $h() { return 1080 }

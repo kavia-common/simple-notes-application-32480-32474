@@ -48,8 +48,9 @@ export default Blits.Component('IconButton', {
     $w() { return 120 },
     $h() { return 80 },
     $bg() {
-      const theme = this.app?.$theme
-      const c = this.bgColor ?? (theme?.colors?.primary ?? 0xff2563eb)
+      const { getSafeTheme } = require('../theme.js')
+      const theme = getSafeTheme(this)
+      const c = this.bgColor ?? (theme.colors.primary)
       return c
     },
     $alpha() {
@@ -62,12 +63,14 @@ export default Blits.Component('IconButton', {
       return this.icon || '+'
     },
     $iconColor() {
-      const theme = this.app?.$theme
-      return theme?.colors?.surface ?? 0xffffffff
+      const { getSafeTheme } = require('../theme.js')
+      const theme = getSafeTheme(this)
+      return theme.colors.surface
     },
     $labelColor() {
-      const theme = this.app?.$theme
-      return theme?.colors?.text ?? 0xff111827
+      const { getSafeTheme } = require('../theme.js')
+      const theme = getSafeTheme(this)
+      return theme.colors.text
     }
   },
   input: {
