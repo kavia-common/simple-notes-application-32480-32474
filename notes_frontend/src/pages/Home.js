@@ -36,7 +36,7 @@ export default Blits.Component('Home', {
       <Element x="32" y="136" :w="$w - 64" :h="$h - 168">
         <!-- Left: Notes list -->
         <Element x="0" y="0" w="560" :h="$h - 168">
-          <NotesList :selectedId="$selected?.id" />
+          <NotesList :selectedId="$selected?.id" :onSelect="$handleSelect" :onCreate="$handleCreate" />
         </Element>
         <!-- Right: Editor -->
         <Element x="592" y="0" :w="$w - 64 - 592" :h="$h - 168">
@@ -50,13 +50,20 @@ export default Blits.Component('Home', {
     $w() { return 1920 },
     $h() { return 1080 }
   },
+  methods: {
+    // PUBLIC_INTERFACE
+    $handleSelect(n) {
+      /** Handles selection from NotesList. */
+      this.selected = n
+    },
+    // PUBLIC_INTERFACE
+    $handleCreate(n) {
+      /** Handles creation from NotesList and selects it. */
+      this.selected = n
+    }
+  },
   hooks: {
-    mounted() {
-      const list = this.$$('NotesList')[0]
-      if (list) {
-        list.onSelect = (n) => { this.selected = n }
-        list.onCreate = (n) => { this.selected = n }
-      }
+    ready() {
       // Listen to editor events to refresh list and selection
       this.$on('note-updated', (n) => {
         const l = this.$$('NotesList')[0]
@@ -76,13 +83,14 @@ export default Blits.Component('Home', {
       const list = this.$$('NotesList')[0]
       const editor = this.$$('EditorPane')[0]
       if (k === 'n') {
-        list?.createNew?.()
+        list?.methods?.createNew?.()
       } else if (k === 'f') {
         // focus list for typing to filter
-        this.focus({ to: list })
+        if (list) this.$setFocus(list)
       } else if (k === 'e') {
         // focus editor, content field
-        editor?.focusContent?.()
+        editor?.methods?.focusContent?.()
+        if (editor) this.$setFocus(editor)
       }
     }
   }

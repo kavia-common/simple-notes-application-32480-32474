@@ -149,7 +149,7 @@ export default Blits.Component('NotesList', {
     down() { this.methods.focusNext() },
     left() { /* bubble to parent if needed */ this.parent?.focus?.() },
     right() { this.parent?.focus?.() },
-    enter() { this.ensureOnSelect?.() },
+    enter() { this.methods.ensureOnSelect?.() },
     back() { /* no-op */ },
     // typing for search
     key(e) {
