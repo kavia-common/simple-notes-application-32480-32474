@@ -1,20 +1,20 @@
-/* eslint-disable */
 /// <reference types="vite/client" />
+/* eslint-disable */
 
 import { defineConfig } from 'vite'
 import blitsVitePlugins from '@lightningjs/blits/vite'
 
-export default defineConfig(({ command, mode, ssrBuild }) => {
+export default defineConfig(() => {
   return {
-    base: '/', // Set to your base path if you are deploying to a subdirectory (example: /myApp/)
+    base: '/',
     plugins: [...blitsVitePlugins],
     resolve: {
       mainFields: ['browser', 'module', 'jsnext:main', 'jsnext'],
     },
     server: {
       host: '0.0.0.0',
-      allowedHosts: ['.kavia.ai'],
       port: 3000,
+      allowedHosts: ['.kavia.ai'],
       headers: {
         'Cross-Origin-Opener-Policy': 'same-origin',
         'Cross-Origin-Embedder-Policy': 'require-corp',
@@ -22,6 +22,10 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       fs: {
         allow: ['..'],
       },
+    },
+    preview: {
+      host: '0.0.0.0',
+      port: 3000
     },
     worker: {
       format: 'es',
